@@ -1,0 +1,52 @@
+name: coverity-cpp-scan
+on:
+  push:
+    branches: [ main, master, develop, stage, release ]
+  pull_request:
+    branches: [ main, master, develop, stage, release ]
+  workflow_dispatch:
+
+
+jobs:
+  coverity:
+    runs-on: ubuntu-latest # Ubuntu provides CMake, Make, and g++ usually
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with:
+        # Required for Coverity analysis is SCM information is needed/used
+        fetch-depth: 0
+
+    - name: Install build tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+
+    - name: Create build directory and run CMake
+      run: |
+        mkdir build
+        cd build
+        cmake ../src
+      working-directory: leechcraft # Run commands inside the 'leechcraft' directory
+
+    - name: Coverity Scan
+      uses: blackduck-inc/black-duck-security-scan@v2.0.0
+      with:
+        # Required: Coverity Connect URL, User, and Passphrase
+        coverity_url: ${{ vars.COVERITY_URL }}
+        coverity_user: ${{ secrets.COV_USER }}
+        coverity_passphrase: ${{ secrets.COVERITY_PASSPHRASE }}
+
+        # Required: The command that executes the main compilation phase
+        coverity_build_command: 'make' # Or 'make -j' for parallel builds
+
+        # Required: The directory where the build command should be run
+        coverity_working_directory: leechcraft/build
+
+        # Optional: Specify a view for policy checks (skip for PRs)
+        coverity_policy_view: ${{ github.event_name != 'pull_request' && 'Outstanding Issues' || '' }}
+
+        # Optional: Enable comments on Pull Requests
+        coverity_prComment_enabled: true
+        github_token: ${{ secrets.GITHUB_TOKEN }}
