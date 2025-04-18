@@ -43,7 +43,7 @@ jobs:
         coverity_build_command: 'mkdir -p build && cd build && cmake ../src && make'
 
         # Required: The directory where the build command should be run
-        coverity_working_directory: leechcraft/build
+        # coverity_working_directory: leechcraft/build
 
         # Optional: Specify a view for policy checks (skip for PRs)
         coverity_policy_view: ${{ github.event_name != 'pull_request' && 'Outstanding Issues' || '' }}
