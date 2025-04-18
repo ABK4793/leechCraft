@@ -1,0 +1,18 @@
+# capture:
+#   build:
+#     clean-command: mvn -B clean
+#     build-command: mvn -B -DskipTests package
+
+  # files:
+  #   exclude-regex: ".*/NullReturnsExample\\.java$"
+      
+analyze:
+  aggressiveness-level: high
+  sigma:
+    enable-check-set: ["all"]
+  checkers:
+    all-security: true
+    audit: true
+    # distrust-all: true
+    webapp-security:
+      enabled: true
