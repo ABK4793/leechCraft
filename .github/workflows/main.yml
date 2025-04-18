@@ -23,12 +23,12 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential cmake
 
-    - name: Create build directory and run CMake
-      run: |
-        mkdir build
-        cd build
-        cmake ../src
-      working-directory: leechcraft # Run commands inside the 'leechcraft' directory
+    # - name: Create build directory and run CMake
+    #   run: |
+    #     mkdir build
+    #     cd build
+    #     cmake ../src
+    #   working-directory: leechcraft # Run commands inside the 'leechcraft' directory
 
     - name: Coverity Scan
       uses: blackduck-inc/black-duck-security-scan@v2.0.0
@@ -39,7 +39,8 @@ jobs:
         coverity_passphrase: ${{ secrets.COVERITY_PASSPHRASE }}
 
         # Required: The command that executes the main compilation phase
-        coverity_build_command: 'make' # Or 'make -j' for parallel builds
+        # coverity_build_command: 'make' # Or 'make -j' for parallel builds
+        coverity_build_command: 'mkdir -p build && cd build && cmake ../src && make'
 
         # Required: The directory where the build command should be run
         coverity_working_directory: leechcraft/build
